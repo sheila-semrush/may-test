@@ -45,12 +45,12 @@ const InputTagsSelectExample = () => {
     return tag.toLowerCase().includes(valueInput.toLowerCase()) && !tags.includes(tag);
   });
 
-  const searchMessageId = useId();
+  const id = useId();
 
   return (
     <>
       <h2>
-        <label htmlFor='secondary-social-medias'>
+        <label htmlFor={`input-${id}`} id={`heading-${id}`}>
           Keywords
         </label>
       </h2>
@@ -80,25 +80,29 @@ const InputTagsSelectExample = () => {
             ref={selectTriggerRef}
             value={valueInput}
             onChange={onChangeValue}
-            id='secondary-social-medias'
+            id={`input-${id}`}
             placeholder='Select keywords'
             onBlur={onBlurValue}
-            aria-describedby={valueInput ? 'search-result' : undefined}
+            aria-describedby={valueInput ? `search-message-${id}` : undefined}
           />
         </Select.Trigger>
-        <Select.Menu>
-          {tagsFilter.map((tag, i) => (
-            <Select.Option value={tag} key={i}>
-              {tag}
-            </Select.Option>
-          ))}
+        <Select.Popper aria-labelledby={`heading-${id}`}>
+          {tagsFilter.length > 0 && (
+            <Select.List aria-labelledby={`heading-${id}`}>
+              {tagsFilter.map((tag, i) => (
+                <Select.Option value={tag} key={i}>
+                  {tag}
+                </Select.Option>
+              ))}
+            </Select.List>
+          )}
           {valueInput !== '' && (
             <SearchMessage
-              id={searchMessageId}
+              id={`search-message-${id}`}
               value={tagsFilter.length}
             />
           )}
-        </Select.Menu>
+        </Select.Popper>
       </Select>
     </>
   );

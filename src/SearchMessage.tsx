@@ -24,7 +24,7 @@ const SearchMessage = ({ value, id }: SearchMessageProps) => {
           id={id}
           key='Nothing'
           px={3}
-          py={2}
+          py={3}
           size={300}
           use='secondary'
         >

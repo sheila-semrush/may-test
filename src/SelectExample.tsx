@@ -39,18 +39,20 @@ const Demo = () => {
             onChange={setFilter}
             aria-describedby={filter ? filterMessageId : undefined}
           />
-          <Select.List hMax='224px'>
-            {options.map(({ value, label }) => (
-              <Select.Option value={value} key={value}>
-                <Select.Option.Checkbox />
-                {label}
-              </Select.Option>
-            ))}
-            <SearchMessage
-              id={filterMessageId}
-              value={options.length}
-            />
-          </Select.List>
+          {options.length > 0 && (
+            <Select.List hMax='224px'>
+              {options.map(({ value, label }) => (
+                <Select.Option value={value} key={value}>
+                  <Select.Option.Checkbox />
+                  {label}
+                </Select.Option>
+              ))}
+            </Select.List>
+          )}
+          <SearchMessage
+            id={filterMessageId}
+            value={options.length}
+          />
         </Select.Popper>
       </Select>
     </Flex>

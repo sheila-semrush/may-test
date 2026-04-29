@@ -121,41 +121,43 @@ const Demo = () => {
             aria-describedby={searchValue ? filterMessageId : undefined}
           />
 
-          <DropdownMenu.List
-            topOffset={68}
-            shadowSize={5}
-            shadowTheme={{ horizontalTop: 'dark', horizontalBottom: 'light' }}
-            mb={1}
-            hMax={316}
-          >
-            {menuData.map((group, index) => {
-              if (group.items.some((item) => {
-                return item.title.toLowerCase().includes(searchValue.toLowerCase());
-              }))
-                return (
-                  <DropdownMenu.Group
-                    key={index}
-                    title={group.title}
-                    subTitle={group.subtitle}
-                    sticky
-                  >
-                    {group.items
-                      .filter(item => item.title.toLowerCase().includes(searchValue.toLowerCase()))
-                      .map(item => (
-                        <Row
-                          key={`${group.title}_${item.title}`}
-                          data={{ group, item, setProject, selectedProject, handleDelete }}
-                        />
-                      ))}
-                  </DropdownMenu.Group>
-                );
-            })}
+          {filteredProjects.length > 0 && (
+            <DropdownMenu.List
+              topOffset={68}
+              shadowSize={5}
+              shadowTheme={{ horizontalTop: 'dark', horizontalBottom: 'light' }}
+              mb={1}
+              hMax={316}
+            >
+              {menuData.map((group, index) => {
+                if (group.items.some((item) => {
+                  return item.title.toLowerCase().includes(searchValue.toLowerCase());
+                }))
+                  return (
+                    <DropdownMenu.Group
+                      key={index}
+                      title={group.title}
+                      subTitle={group.subtitle}
+                      sticky
+                    >
+                      {group.items
+                        .filter(item => item.title.toLowerCase().includes(searchValue.toLowerCase()))
+                        .map(item => (
+                          <Row
+                            key={`${group.title}_${item.title}`}
+                            data={{ group, item, setProject, selectedProject, handleDelete }}
+                          />
+                        ))}
+                    </DropdownMenu.Group>
+                  );
+              })}
+            </DropdownMenu.List>
+          )}
 
-            <SearchMessage
-              id={filterMessageId}
-              value={filteredProjects.length}
-            />
-          </DropdownMenu.List>
+          <SearchMessage
+            id={filterMessageId}
+            value={filteredProjects.length}
+          />
         </DropdownMenu.Popper>
       </DropdownMenu>
     </>
