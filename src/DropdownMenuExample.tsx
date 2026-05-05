@@ -10,6 +10,13 @@ import SearchMessage from './SearchMessage';
 type Item = {
   title: string;
   description: string;
+  index: number;
+};
+
+type Group = {
+  title: string;
+  subtitle: string;
+  items: Item[];
 };
 
 const initialMenuData = [
@@ -17,18 +24,18 @@ const initialMenuData = [
     title: 'William Shakespeare',
     subtitle: 'English playwright and poet',
     items: [
-      { title: 'Hamlet', description: 'Tragedy, 1623' },
-      { title: 'King Lear', description: 'Tragedy, 1606' },
-      { title: 'Romeo and Juliet', description: 'Tragedy, 1597' },
+      { title: 'Hamlet', description: 'Tragedy, 1623', index: 0 },
+      { title: 'King Lear', description: 'Tragedy, 1606', index: 1 },
+      { title: 'Romeo and Juliet', description: 'Tragedy, 1597', index: 2 },
     ],
   },
   {
     title: 'Jane Austen',
     subtitle: 'English writer',
     items: [
-      { title: 'Emma', description: 'Novel of manners, 1815' },
-      { title: 'Pride and Prejudice', description: 'Novel of manners, 1813' },
-      { title: 'Sense and Sensibility', description: 'Romance novel, 1811' },
+      { title: 'Emma', description: 'Novel of manners, 1815', index: 3 },
+      { title: 'Pride and Prejudice', description: 'Novel of manners, 1813', index: 4 },
+      { title: 'Sense and Sensibility', description: 'Romance novel, 1811', index: 5 },
     ],
   },
 ];
@@ -39,6 +46,7 @@ const Row = React.memo(({ style, data: { group, item, setProject, selectedProjec
       key={item.title}
       onClick={() => setProject(item.title)}
       selected={selectedProject === item.title}
+      index={item.index}
     >
       <DropdownMenu inlineActions placement='right'>
         <Flex justifyContent='space-between'>
@@ -69,16 +77,7 @@ const Demo = () => {
   const [highlightedIndex, setHighlightedIndex] = useState<number | null>(null);
   const [selectedProject, setProject] = useState<string | null>('Hamlet');
   const [menuData, setMenuData] = useState(initialMenuData);
-
-  const filteredProjects = menuData.reduce<Item[]>((acc, { items }) => {
-    items.forEach((item) => {
-      if (item.title.toLowerCase().includes(searchValue.toLowerCase())) {
-        acc.push(item);
-      }
-    });
-
-    return acc;
-  }, []);
+  const [filteredMenuData, setFilteredMenuData] = useState(initialMenuData);
 
   const filterMessageId = useId();
 
@@ -95,6 +94,33 @@ const Demo = () => {
     });
     setMenuData(newMenuData);
   };
+
+  React.useEffect(() => {
+    const newFilteredProjects: Group[] = [];
+    let highlightedIndex = -1;
+
+    menuData.forEach((group, i) => {
+      group.items.forEach((item) => {
+        if (item.title.toLowerCase().includes(searchValue.toLowerCase())) {
+          if (!newFilteredProjects[i]) {
+            newFilteredProjects[i] = {
+              ...group,
+              items: [],
+            };
+          }
+          newFilteredProjects[i].items.push(item);
+
+          if (item.title === selectedProject || highlightedIndex === -1) {
+            highlightedIndex = item.index;
+          }
+        }
+      });
+    });
+
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setHighlightedIndex(highlightedIndex);
+    setFilteredMenuData(newFilteredProjects);
+  }, [menuData, searchValue, selectedProject]);
 
   return (
     <>
@@ -121,7 +147,7 @@ const Demo = () => {
             aria-describedby={searchValue ? filterMessageId : undefined}
           />
 
-          {filteredProjects.length > 0 && (
+          {filteredMenuData.length > 0 && (
             <DropdownMenu.List
               topOffset={68}
               shadowSize={5}
@@ -129,34 +155,29 @@ const Demo = () => {
               mb={1}
               hMax={316}
             >
-              {menuData.map((group, index) => {
-                if (group.items.some((item) => {
-                  return item.title.toLowerCase().includes(searchValue.toLowerCase());
-                }))
-                  return (
-                    <DropdownMenu.Group
-                      key={index}
-                      title={group.title}
-                      subTitle={group.subtitle}
-                      sticky
-                    >
-                      {group.items
-                        .filter(item => item.title.toLowerCase().includes(searchValue.toLowerCase()))
-                        .map(item => (
-                          <Row
-                            key={`${group.title}_${item.title}`}
-                            data={{ group, item, setProject, selectedProject, handleDelete }}
-                          />
-                        ))}
-                    </DropdownMenu.Group>
-                  );
+              {filteredMenuData.map((group, index) => {
+                return (
+                  <DropdownMenu.Group
+                    key={index}
+                    title={group.title}
+                    subTitle={group.subtitle}
+                    sticky
+                  >
+                    {group.items.map(item => (
+                      <Row
+                        key={`${group.title}_${item.title}`}
+                        data={{ group, item, setProject, selectedProject, handleDelete }}
+                      />
+                    ))}
+                  </DropdownMenu.Group>
+                );
               })}
             </DropdownMenu.List>
           )}
 
           <SearchMessage
             id={filterMessageId}
-            value={filteredProjects.length}
+            value={filteredMenuData.length}
           />
         </DropdownMenu.Popper>
       </DropdownMenu>
