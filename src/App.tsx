@@ -11,13 +11,13 @@ const Demo = () => (
   <>
     <h1>Welcome to the testing page</h1>
 
-    <Flex direction='column' alignItems='start' mb={10}>
-      <DropdownMenuExample />
-      <DropdownMenuNested />
-      <SelectExample />
-      <InputTagsValidation />
-      <InputTagsSelectExample />
+    <Flex direction='column' alignItems='start' mb={100}>
       <CarouselExample />
+      <InputTagsSelectExample />
+      <InputTagsValidation />
+      <SelectExample />
+      <DropdownMenuNested />
+      <DropdownMenuExample />
     </Flex>
   </>
 );

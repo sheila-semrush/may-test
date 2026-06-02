@@ -75,7 +75,7 @@ const Demo = () => {
   const [searchValue, setSearchValue] = useState('');
   const [visible, setVisible] = useState(false);
   const [highlightedIndex, setHighlightedIndex] = useState<number | null>(null);
-  const [selectedProject, setProject] = useState<string | null>('Hamlet');
+  const [selectedProject, setProject] = useState<string | null>(null);
   const [menuData, setMenuData] = useState(initialMenuData);
   const [filteredMenuData, setFilteredMenuData] = useState(initialMenuData);
 
