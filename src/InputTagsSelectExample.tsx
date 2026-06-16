@@ -18,10 +18,10 @@ const InputTagsSelectExample = () => {
     }
   }
 
-  function onRemoveTag(index: number, e: React.SyntheticEvent<HTMLElement>) {
+  function onRemoveTag(tag: string, index: number, e: React.SyntheticEvent<HTMLElement>) {
     e.stopPropagation();
-    const newTags = tags.filter((_, i) => i !== index);
-    setTags(tags.filter((_, i) => i !== index));
+    const newTags = tags.filter(t => t !== tag);
+    setTags(newTags);
     if (newTags.length === index) {
       selectTriggerRef.current?.focus();
     }
@@ -34,10 +34,6 @@ const InputTagsSelectExample = () => {
 
   function onChange(value: string[]) {
     setTags(value);
-    setValueInput('');
-  }
-
-  function onBlurValue() {
     setValueInput('');
   }
 
@@ -71,9 +67,9 @@ const InputTagsSelectExample = () => {
           onRemove={onRemoveLastTag}
         >
           {tags.map((tag, i) => (
-            <InputTags.Tag key={i} theme='primary'>
+            <InputTags.Tag key={tag} theme='primary'>
               <InputTags.Tag.Text>{tag}</InputTags.Tag.Text>
-              <InputTags.Tag.Close onClick={e => onRemoveTag(i, e)} />
+              <InputTags.Tag.Close onClick={e => onRemoveTag(tag, i, e)} />
             </InputTags.Tag>
           ))}
           <InputTags.Value
@@ -82,15 +78,14 @@ const InputTagsSelectExample = () => {
             onChange={onChangeValue}
             id={`input-${id}`}
             placeholder='Select keywords'
-            onBlur={onBlurValue}
             aria-describedby={valueInput ? `search-message-${id}` : undefined}
           />
         </Select.Trigger>
         <Select.Popper aria-labelledby={`heading-${id}`}>
           {tagsFilter.length > 0 && (
             <Select.List aria-labelledby={`heading-${id}`}>
-              {tagsFilter.map((tag, i) => (
-                <Select.Option value={tag} key={i}>
+              {tagsFilter.map(tag => (
+                <Select.Option value={tag} key={tag}>
                   {tag}
                 </Select.Option>
               ))}
